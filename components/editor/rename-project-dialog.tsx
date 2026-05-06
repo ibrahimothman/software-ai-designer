@@ -11,20 +11,24 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import type { MockProject } from '@/lib/mock-projects';
+import type { Project } from '@/lib/projects';
 
 /** Props for the RenameProjectDialog component. */
 interface RenameProjectDialogProps {
   /** Whether the dialog is visible. */
   open: boolean;
   /** The project being renamed, or null when the dialog is closed. */
-  project: MockProject | null;
+  project: Project | null;
   /** Current controlled value of the name input, prefilled with the project's name. */
   formName: string;
   /** Called whenever the name input changes. */
   onFormNameChange: (name: string) => void;
-  /** Called when the dialog should close (cancel or submit). */
+  /** Called with the final name when the user confirms. */
+  onSubmit: (name: string) => void;
+  /** Called when the dialog should close without submitting. */
   onClose: () => void;
+  /** Disables interactive controls while a request is in flight. */
+  isLoading: boolean;
 }
 
 /**
@@ -36,11 +40,13 @@ export function RenameProjectDialog({
   project,
   formName,
   onFormNameChange,
+  onSubmit,
   onClose,
+  isLoading,
 }: RenameProjectDialogProps) {
   /** Submits on Enter if the name is non-empty. */
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && formName.trim()) onClose();
+    if (e.key === 'Enter' && formName.trim() && !isLoading) onSubmit(formName);
   };
 
   return (
@@ -62,11 +68,17 @@ export function RenameProjectDialog({
             onChange={(e) => onFormNameChange(e.target.value)}
             onKeyDown={handleKeyDown}
             autoFocus
+            disabled={isLoading}
           />
         </div>
         <DialogFooter>
-          <Button variant="ghost" onClick={onClose}>Cancel</Button>
-          <Button disabled={!formName.trim()} onClick={onClose}>Rename</Button>
+          <Button variant="ghost" onClick={onClose} disabled={isLoading}>Cancel</Button>
+          <Button
+            disabled={!formName.trim() || isLoading}
+            onClick={() => onSubmit(formName)}
+          >
+            {isLoading ? 'Renaming…' : 'Rename'}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

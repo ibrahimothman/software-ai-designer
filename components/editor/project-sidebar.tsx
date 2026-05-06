@@ -3,7 +3,7 @@
 import { Pencil, Plus, Trash2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import type { MockProject } from '@/lib/mock-projects';
+import type { Project } from '@/lib/projects';
 
 /** Props for the floating project sidebar. */
 interface ProjectSidebarProps {
@@ -11,33 +11,50 @@ interface ProjectSidebarProps {
   isOpen: boolean;
   /** Callback to close the sidebar. */
   onClose: () => void;
-  /** Full list of mock projects to display. */
-  projects: MockProject[];
+  /** Projects owned by the current user. */
+  ownedProjects: Project[];
+  /** Projects the current user is a collaborator on. */
+  sharedProjects: Project[];
+  /** ID of the currently active workspace project, used to highlight the active row. */
+  activeProjectId?: string;
+  /** Selects a project by ID and navigates to its workspace. */
+  onSelectProject: (projectId: string) => void;
   /** Opens the Create Project dialog. */
   onNewProject: () => void;
   /** Opens the Rename Project dialog for the given project. */
-  onRenameProject: (project: MockProject) => void;
+  onRenameProject: (project: Project) => void;
   /** Opens the Delete Project dialog for the given project. */
-  onDeleteProject: (project: MockProject) => void;
+  onDeleteProject: (project: Project) => void;
 }
 
 /** Props for a single project list item. */
 interface ProjectItemProps {
   /** The project to display. */
-  project: MockProject;
+  project: Project;
   /** Whether to show rename/delete actions on hover. */
   showActions: boolean;
+  /** Whether this project is the currently active workspace. */
+  isActive: boolean;
+  /** Selects a project by ID and navigates to its workspace. */
+  onSelect: (projectId: string) => void;
   /** Opens the rename dialog for this project. */
-  onRename: (project: MockProject) => void;
+  onRename: (project: Project) => void;
   /** Opens the delete dialog for this project. */
-  onDelete: (project: MockProject) => void;
+  onDelete: (project: Project) => void;
 }
 
 /** A single project row with optional hover actions for owned projects. */
-function ProjectItem({ project, showActions, onRename, onDelete }: ProjectItemProps) {
+function ProjectItem({ project, showActions, isActive, onRename, onDelete, onSelect }: ProjectItemProps) {
   return (
-    <div className="group flex items-center gap-2 px-2 py-2 rounded-xl hover:bg-subtle cursor-pointer">
-      <span className="flex-1 text-sm text-copy-primary truncate">{project.name}</span>
+    <div
+      className={`group flex items-center gap-2 px-2 py-2 rounded-xl cursor-pointer transition-colors ${
+        isActive ? 'bg-accent-dim text-brand' : 'hover:bg-subtle'
+      }`}
+      onClick={() => onSelect(project.id)}
+    >
+      <span className={`flex-1 text-sm truncate ${isActive ? 'text-brand font-medium' : 'text-copy-primary'}`}>
+        {project.name}
+      </span>
       {showActions && (
         <div className="hidden group-hover:flex items-center gap-0.5 shrink-0">
           <button
@@ -67,14 +84,14 @@ function ProjectItem({ project, showActions, onRename, onDelete }: ProjectItemPr
 export function ProjectSidebar({
   isOpen,
   onClose,
-  projects,
+  ownedProjects,
+  sharedProjects,
+  activeProjectId,
+  onSelectProject,
   onNewProject,
   onRenameProject,
   onDeleteProject,
 }: ProjectSidebarProps) {
-  const ownedProjects = projects.filter((p) => p.isOwned);
-  const sharedProjects = projects.filter((p) => !p.isOwned);
-
   return (
     <>
       {isOpen && (
@@ -120,6 +137,8 @@ export function ProjectSidebar({
                       <ProjectItem
                         project={project}
                         showActions
+                        onSelect={onSelectProject}
+                        isActive={project.id === activeProjectId}
                         onRename={onRenameProject}
                         onDelete={onDeleteProject}
                       />
@@ -141,6 +160,8 @@ export function ProjectSidebar({
                       <ProjectItem
                         project={project}
                         showActions={false}
+                        isActive={project.id === activeProjectId}
+                        onSelect={onSelectProject}
                         onRename={onRenameProject}
                         onDelete={onDeleteProject}
                       />
