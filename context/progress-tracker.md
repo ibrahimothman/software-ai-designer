@@ -4,11 +4,11 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## Current Phase
 
-- Feature 04: Project Dialogs.
+- Feature 06: (next planned feature).
 
 ## Current Goal
 
-- Proceed to the next feature unit.
+- Define and implement the next feature unit.
 
 ## Completed
 
@@ -16,10 +16,11 @@ Update this file whenever the current phase, active feature, or implementation s
 - **02-editor**: `EditorNavbar` and `ProjectSidebar` shell components built. Navbar is a fixed top bar with sidebar toggle (`PanelLeftOpen`/`PanelLeftClose`) wired via props. Sidebar floats above canvas (fixed, z-40), slides in from the left with CSS transform, shows shadcn Tabs ("My Projects" / "Shared") with empty placeholder states, and a full-width "New Project" button at the bottom. Both components are `"use client"` and TypeScript-strict. Dialog pattern is available via the existing `components/ui/dialog.tsx` (inherits dark tokens from `:root` CSS variables).
 - **03-auth**: Clerk wired into the app. `proxy.ts` at project root uses `clerkMiddleware` to protect all routes except `/sign-in` and `/sign-up` (defined via env vars). `ClerkProvider` wraps the root layout with the bundled `@clerk/ui` dark theme overridden by project CSS custom property tokens. Two-panel auth layout at `app/(auth)/layout.tsx` (branding panel on large screens, form-only on small). Sign-in (`app/(auth)/sign-in/[[...sign-in]]`) and sign-up (`app/(auth)/sign-up/[[...sign-up]]`) pages use Clerk components. Root `/` redirects authenticated users to `/editor` and unauthenticated users to `/sign-in`. `UserButton` added to `EditorNavbar` right section. Minimal editor page at `app/editor/page.tsx` renders the existing shell components. Build passes.
 - **04-project-dialogs**: Editor home screen with centered heading/description/CTA. Create dialog with live slug preview. Rename dialog (auto-focus, Enter submits). Delete dialog (destructive confirm). Sidebar project items with hover rename/delete actions for owned projects only. Mobile backdrop scrim. `useProjectDialogs` hook manages all dialog/form/loading state. Build passes with no errors.
+- **05-prisma**: `Project` and `ProjectCollaborator` models in `prisma/models/project.prisma` (status enum, cascade delete, composite PK, all required indexes). `lib/prisma.ts` singleton: branches on `DATABASE_URL` — `prisma+postgres://` uses `accelerateUrl` + `withAccelerate()`, otherwise uses `PrismaPg` adapter; dev instance cached on `globalThis`. First migration applied (`20260506145405_add_project_models`). `prisma migrate status` confirms database is up to date. `npm run build` passes.
 
 ## In Progress
 
-- None.
+- Nothing in progress yet.
 
 ## Next Up
 
