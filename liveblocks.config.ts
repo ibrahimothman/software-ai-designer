@@ -11,7 +11,7 @@ declare global {
     }
 
     // The Storage tree for the room, for useMutation, useStorage, etc.
-    Storage: {}
+    Storage: Record<string, never>
 
     /** Custom user info set when authenticating with a secret key. */
     UserMeta: {
@@ -27,13 +27,13 @@ declare global {
     }
 
     // Custom events, for useBroadcastEvent, useEventListener
-    RoomEvent: {}
+    RoomEvent: Record<string, never>
 
     // Custom metadata set on threads, for useThreads, useCreateThread, etc.
-    ThreadMetadata: {}
+    ThreadMetadata: Record<string, never>
 
     // Custom room info set with resolveRoomsInfo, for useRoomInfo
-    RoomInfo: {}
+    RoomInfo: Record<string, never>
   }
 }
 
