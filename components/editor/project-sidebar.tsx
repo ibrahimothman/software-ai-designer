@@ -3,7 +3,7 @@
 import { Pencil, Plus, Trash2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import type { MockProject } from '@/lib/mock-projects';
+import type { Project } from '@/lib/projects';
 
 /** Props for the floating project sidebar. */
 interface ProjectSidebarProps {
@@ -11,26 +11,28 @@ interface ProjectSidebarProps {
   isOpen: boolean;
   /** Callback to close the sidebar. */
   onClose: () => void;
-  /** Full list of mock projects to display. */
-  projects: MockProject[];
+  /** Projects owned by the current user. */
+  ownedProjects: Project[];
+  /** Projects the current user is a collaborator on. */
+  sharedProjects: Project[];
   /** Opens the Create Project dialog. */
   onNewProject: () => void;
   /** Opens the Rename Project dialog for the given project. */
-  onRenameProject: (project: MockProject) => void;
+  onRenameProject: (project: Project) => void;
   /** Opens the Delete Project dialog for the given project. */
-  onDeleteProject: (project: MockProject) => void;
+  onDeleteProject: (project: Project) => void;
 }
 
 /** Props for a single project list item. */
 interface ProjectItemProps {
   /** The project to display. */
-  project: MockProject;
+  project: Project;
   /** Whether to show rename/delete actions on hover. */
   showActions: boolean;
   /** Opens the rename dialog for this project. */
-  onRename: (project: MockProject) => void;
+  onRename: (project: Project) => void;
   /** Opens the delete dialog for this project. */
-  onDelete: (project: MockProject) => void;
+  onDelete: (project: Project) => void;
 }
 
 /** A single project row with optional hover actions for owned projects. */
@@ -67,14 +69,12 @@ function ProjectItem({ project, showActions, onRename, onDelete }: ProjectItemPr
 export function ProjectSidebar({
   isOpen,
   onClose,
-  projects,
+  ownedProjects,
+  sharedProjects,
   onNewProject,
   onRenameProject,
   onDeleteProject,
 }: ProjectSidebarProps) {
-  const ownedProjects = projects.filter((p) => p.isOwned);
-  const sharedProjects = projects.filter((p) => !p.isOwned);
-
   return (
     <>
       {isOpen && (

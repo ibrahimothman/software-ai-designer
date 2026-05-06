@@ -11,16 +11,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 
-/** Derives a URL-safe slug from a project name. */
-function generateSlug(name: string): string {
-  return name
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
-}
-
 /** Props for the CreateProjectDialog component. */
 interface CreateProjectDialogProps {
   /** Whether the dialog is visible. */
@@ -29,22 +19,29 @@ interface CreateProjectDialogProps {
   formName: string;
   /** Called whenever the name input changes. */
   onFormNameChange: (name: string) => void;
-  /** Called when the dialog should close (cancel or submit). */
+  /** Pre-computed room ID preview shown below the name input. */
+  roomIdPreview: string;
+  /** Called with the final name when the user confirms. */
+  onSubmit: (name: string) => void;
+  /** Called when the dialog should close without submitting. */
   onClose: () => void;
+  /** Disables interactive controls while a request is in flight. */
+  isLoading: boolean;
 }
 
 /**
  * Dialog for creating a new project.
- * Shows a name input with a live slug preview that updates as the user types.
+ * Shows a name input with a live room ID preview that updates as the user types.
  */
 export function CreateProjectDialog({
   open,
   formName,
   onFormNameChange,
+  roomIdPreview,
+  onSubmit,
   onClose,
+  isLoading,
 }: CreateProjectDialogProps) {
-  const slug = generateSlug(formName);
-
   return (
     <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
       <DialogContent className="sm:max-w-md">
@@ -59,16 +56,22 @@ export function CreateProjectDialog({
             value={formName}
             onChange={(e) => onFormNameChange(e.target.value)}
             autoFocus
+            disabled={isLoading}
           />
           {formName && (
             <p className="text-xs text-copy-muted font-mono px-1">
-              <span className="text-copy-primary">{slug || '—'}</span>
+              Room ID: <span className="text-copy-primary">{roomIdPreview || '—'}</span>
             </p>
           )}
         </div>
         <DialogFooter>
-          <Button variant="ghost" onClick={onClose}>Cancel</Button>
-          <Button disabled={!formName.trim()} onClick={onClose}>Create Project</Button>
+          <Button variant="ghost" onClick={onClose} disabled={isLoading}>Cancel</Button>
+          <Button
+            disabled={!formName.trim() || isLoading}
+            onClick={() => onSubmit(formName)}
+          >
+            {isLoading ? 'Creating…' : 'Create Project'}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

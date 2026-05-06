@@ -9,23 +9,27 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import type { MockProject } from '@/lib/mock-projects';
+import type { Project } from '@/lib/projects';
 
 /** Props for the DeleteProjectDialog component. */
 interface DeleteProjectDialogProps {
   /** Whether the dialog is visible. */
   open: boolean;
   /** The project to be deleted, or null when the dialog is closed. */
-  project: MockProject | null;
-  /** Called when the dialog should close (cancel or confirm). */
+  project: Project | null;
+  /** Called when the user confirms deletion. */
+  onConfirm: () => void;
+  /** Called when the dialog should close without deleting. */
   onClose: () => void;
+  /** Disables interactive controls while a request is in flight. */
+  isLoading: boolean;
 }
 
 /**
  * Destructive confirmation dialog for deleting a project.
  * No input — confirm button uses destructive styling.
  */
-export function DeleteProjectDialog({ open, project, onClose }: DeleteProjectDialogProps) {
+export function DeleteProjectDialog({ open, project, onConfirm, onClose, isLoading }: DeleteProjectDialogProps) {
   return (
     <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
       <DialogContent className="sm:max-w-md">
@@ -39,8 +43,10 @@ export function DeleteProjectDialog({ open, project, onClose }: DeleteProjectDia
           )}
         </DialogHeader>
         <DialogFooter>
-          <Button variant="ghost" onClick={onClose}>Cancel</Button>
-          <Button variant="destructive" onClick={onClose}>Delete Project</Button>
+          <Button variant="ghost" onClick={onClose} disabled={isLoading}>Cancel</Button>
+          <Button variant="destructive" onClick={onConfirm} disabled={isLoading}>
+            {isLoading ? 'Deleting…' : 'Delete Project'}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
