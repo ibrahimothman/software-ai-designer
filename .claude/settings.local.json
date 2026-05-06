@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Remove-Item \"c:\\\\projects\\\\AI\\\\ghos-ai\\\\public\\\\file.svg\", \"c:\\\\projects\\\\AI\\\\ghos-ai\\\\public\\\\globe.svg\", \"c:\\\\projects\\\\AI\\\\ghos-ai\\\\public\\\\next.svg\", \"c:\\\\projects\\\\AI\\\\ghos-ai\\\\public\\\\vercel.svg\", \"c:\\\\projects\\\\AI\\\\ghos-ai\\\\public\\\\window.svg\")"
+    ]
+  }
+}
