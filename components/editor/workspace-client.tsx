@@ -1,63 +1,87 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { EditorNavbar } from '@/components/editor/editor-navbar';
 import { ProjectSidebar } from '@/components/editor/project-sidebar';
 import { CreateProjectDialog } from '@/components/editor/create-project-dialog';
 import { RenameProjectDialog } from '@/components/editor/rename-project-dialog';
 import { DeleteProjectDialog } from '@/components/editor/delete-project-dialog';
+import { ShareDialog } from '@/components/editor/share-dialog';
 import { useProjectActions } from '@/hooks/use-project-actions';
 import type { Project } from '@/lib/projects';
 
-/** Props passed down from the server-rendered editor home page. */
-interface EditorHomeClientProps {
-  /** Projects owned by the current user. */
+/** Props passed from the server-rendered workspace page. */
+interface WorkspaceClientProps {
+  /** The project for this workspace. */
+  project: Project;
+  /** The room/project ID currently active in the URL. */
+  activeRoomId: string;
+  /** Whether the current user owns this project. */
+  isOwner: boolean;
+  /** Owned projects for the sidebar. */
   ownedProjects: Project[];
-  /** Projects the current user is a collaborator on. */
+  /** Shared projects for the sidebar. */
   sharedProjects: Project[];
 }
 
 /**
- * Client shell for the editor home page.
- * Receives pre-fetched project lists from the server and wires all interactive state.
+ * Client shell for the `/editor/[roomId]` workspace page.
+ * Manages sidebar visibility, AI panel state, share dialog, and project mutation dialogs.
  */
-export function EditorHomeClient({ ownedProjects, sharedProjects }: EditorHomeClientProps) {
+export function WorkspaceClient({
+  project,
+  activeRoomId,
+  isOwner,
+  ownedProjects,
+  sharedProjects,
+}: WorkspaceClientProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isAISidebarOpen, setIsAISidebarOpen] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
   const actions = useProjectActions();
 
   return (
-    <div className="h-screen bg-base">
+    <div className="h-screen bg-base overflow-hidden flex flex-col">
       <EditorNavbar
         isSidebarOpen={isSidebarOpen}
         onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
+        projectName={project.name}
+        onShareClick={isOwner ? () => setIsShareOpen(true) : undefined}
+        isAISidebarOpen={isAISidebarOpen}
+        onToggleAI={() => setIsAISidebarOpen((prev) => !prev)}
       />
+
       <ProjectSidebar
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
         ownedProjects={ownedProjects}
         sharedProjects={sharedProjects}
+        activeProjectId={activeRoomId}
         onSelectProject={actions.selectProject}
         onNewProject={actions.openCreate}
         onRenameProject={actions.openRename}
         onDeleteProject={actions.openDelete}
       />
 
-      <main className="flex h-screen items-center justify-center">
-        <div className="flex flex-col items-center gap-4 text-center px-4">
-          <h1 className="text-xl font-semibold text-copy-primary">
-            Create a project or open an existing one
-          </h1>
-          <p className="text-sm text-copy-muted max-w-sm">
-            Start a new architecture workspace, or choose a project from the sidebar.
-          </p>
-          <Button onClick={actions.openCreate} className="gap-2">
-            <Plus className="h-4 w-4" />
-            New Project
-          </Button>
-        </div>
-      </main>
+      <div className="flex flex-1 overflow-hidden pt-12">
+        <main className="flex-1 flex items-center justify-center bg-base">
+          <p className="text-copy-faint text-sm">Canvas coming soon</p>
+        </main>
+
+        {isAISidebarOpen && (
+          <aside className="w-80 shrink-0 border-l border-surface-border bg-elevated flex items-center justify-center">
+            <p className="text-copy-faint text-sm">AI chat coming soon</p>
+          </aside>
+        )}
+      </div>
+
+      <ShareDialog
+        open={isShareOpen}
+        projectId={project.id}
+        projectName={project.name}
+        isOwner={isOwner}
+        onClose={() => setIsShareOpen(false)}
+      />
 
       <CreateProjectDialog
         open={actions.activeDialog.type === 'create'}

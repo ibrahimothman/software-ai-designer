@@ -47,6 +47,8 @@ export interface UseProjectActionsReturn {
   openRename: (project: Project) => void
   /** Opens the Delete confirmation dialog for the given project. */
   openDelete: (project: Project) => void
+  /** Selects a project by ID and navigates to its workspace. */
+  selectProject: (projectId: string) => void
   /** Closes any open dialog and resets transient form state. */
   closeAll: () => void
   /** POSTs a new project and navigates to its workspace on success. */
@@ -84,6 +86,10 @@ export function useProjectActions(): UseProjectActionsReturn {
 
   const openDelete = (project: Project) => {
     setActiveDialog({ type: 'delete', project })
+  }
+
+  const selectProject = (projectId: string) => {
+    router.push(`/editor/${projectId}`)
   }
 
   const closeAll = () => {
@@ -150,6 +156,7 @@ export function useProjectActions(): UseProjectActionsReturn {
     openCreate,
     openRename,
     openDelete,
+    selectProject,
     closeAll,
     handleCreate,
     handleRename,
