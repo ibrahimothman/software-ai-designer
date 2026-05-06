@@ -1,9 +1,15 @@
-import { Button } from "@/components/ui/button";
+import { auth } from '@clerk/nextjs/server';
+import { redirect } from 'next/navigation';
 
-export default function Home() {
-  return (
-    <div className="flex h-screen items-center justify-center">
-      <p>ghost AI</p>
-    </div>
-  );
+/**
+ * Root route: immediately redirects to the editor for authenticated users
+ * or to sign-in for unauthenticated users.
+ */
+export default async function RootPage() {
+  const { userId } = await auth();
+  if (userId) {
+    redirect('/editor');
+  } else {
+    redirect('/sign-in');
+  }
 }

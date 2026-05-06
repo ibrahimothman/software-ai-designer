@@ -14,6 +14,7 @@ Update this file whenever the current phase, active feature, or implementation s
 
 - **01-design-system**: shadcn/ui initialized (v4.7.0, Tailwind v4 mode), components installed (Button, Card, Dialog, Input, Tabs, Textarea, ScrollArea), lucide-react installed, `lib/utils.ts` with `cn()` helper created, `globals.css` configured with full dark-only theme palette and project token aliases mapped via `@theme inline`. Build passes with no errors.
 - **02-editor**: `EditorNavbar` and `ProjectSidebar` shell components built. Navbar is a fixed top bar with sidebar toggle (`PanelLeftOpen`/`PanelLeftClose`) wired via props. Sidebar floats above canvas (fixed, z-40), slides in from the left with CSS transform, shows shadcn Tabs ("My Projects" / "Shared") with empty placeholder states, and a full-width "New Project" button at the bottom. Both components are `"use client"` and TypeScript-strict. Dialog pattern is available via the existing `components/ui/dialog.tsx` (inherits dark tokens from `:root` CSS variables).
+- **03-auth**: Clerk wired into the app. `proxy.ts` at project root uses `clerkMiddleware` to protect all routes except `/sign-in` and `/sign-up` (defined via env vars). `ClerkProvider` wraps the root layout with the bundled `@clerk/ui` dark theme overridden by project CSS custom property tokens. Two-panel auth layout at `app/(auth)/layout.tsx` (branding panel on large screens, form-only on small). Sign-in (`app/(auth)/sign-in/[[...sign-in]]`) and sign-up (`app/(auth)/sign-up/[[...sign-up]]`) pages use Clerk components. Root `/` redirects authenticated users to `/editor` and unauthenticated users to `/sign-in`. `UserButton` added to `EditorNavbar` right section. Minimal editor page at `app/editor/page.tsx` renders the existing shell components. Build passes.
 
 ## In Progress
 
@@ -31,6 +32,8 @@ Update this file whenever the current phase, active feature, or implementation s
 
 - Dark-only: shadcn/ui semantic variables (`--background`, `--foreground`, etc.) are set directly on `:root` to the dark theme values. No `.dark` class toggle is used — the app is always dark.
 - Project token aliases (`bg-base`, `text-copy-primary`, `border-surface-border`, `text-brand`, `bg-accent-dim`, etc.) are mapped in `@theme inline` pointing to the CSS custom properties defined in `:root`.
+- Auth: `proxy.ts` (not `middleware.ts`) is used per Next.js 16 convention. Public routes are derived from `NEXT_PUBLIC_CLERK_SIGN_IN_URL` and `NEXT_PUBLIC_CLERK_SIGN_UP_URL` env vars.
+- Clerk UI: bundled via `@clerk/ui` (`ui` prop on `ClerkProvider`) using the `dark` base theme. Appearance variables reference CSS custom properties — no hardcoded colors.
 
 ## Session Notes
 
