@@ -48,3 +48,7 @@
 - `components/` — UI composition only; no business logic.
 - `app/api/` — route handlers for auth, triggering, and persistence.
 - Name files after the responsibility they contain, not the technology.
+
+## DocString
+
+Automatic JSDoc/Docstrings: Every function, interface, and exported constant must have a JSDoc-style comment.
