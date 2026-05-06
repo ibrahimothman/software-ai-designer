@@ -8,6 +8,7 @@ import { RenameProjectDialog } from '@/components/editor/rename-project-dialog';
 import { DeleteProjectDialog } from '@/components/editor/delete-project-dialog';
 import { ShareDialog } from '@/components/editor/share-dialog';
 import { useProjectActions } from '@/hooks/use-project-actions';
+import { CanvasProvider } from '@/components/editor/canvas-provider';
 import type { Project } from '@/lib/projects';
 
 /** Props passed from the server-rendered workspace page. */
@@ -26,7 +27,7 @@ interface WorkspaceClientProps {
 
 /**
  * Client shell for the `/editor/[roomId]` workspace page.
- * Manages sidebar visibility, AI panel state, share dialog, and project mutation dialogs.
+ * Canvas fills the full viewport; navbar and sidebars float above it as fixed overlays.
  */
 export function WorkspaceClient({
   project,
@@ -41,7 +42,13 @@ export function WorkspaceClient({
   const actions = useProjectActions();
 
   return (
-    <div className="h-screen bg-base overflow-hidden flex flex-col">
+    <div className="relative h-screen w-screen overflow-hidden">
+      {/* Canvas fills the full viewport; isolate keeps ReactFlow's z-indices contained */}
+      <div className="absolute inset-0 isolate">
+        <CanvasProvider roomId={activeRoomId} />
+      </div>
+
+      {/* Top navbar — fixed, z-50 */}
       <EditorNavbar
         isSidebarOpen={isSidebarOpen}
         onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
@@ -51,6 +58,7 @@ export function WorkspaceClient({
         onToggleAI={() => setIsAISidebarOpen((prev) => !prev)}
       />
 
+      {/* Left project sidebar — fixed, slides in from left, z-40 */}
       <ProjectSidebar
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
@@ -63,18 +71,15 @@ export function WorkspaceClient({
         onDeleteProject={actions.openDelete}
       />
 
-      <div className="flex flex-1 overflow-hidden pt-12">
-        <main className="flex-1 flex items-center justify-center bg-base">
-          <p className="text-copy-faint text-sm">Canvas coming soon</p>
-        </main>
+      {/* Right AI panel — fixed, slides in from right, z-40 */}
+      <aside
+        className="fixed top-12 right-0 bottom-0 z-40 w-80 bg-elevated border-l border-surface-border shadow-2xl flex items-center justify-center transition-transform duration-200 ease-in-out"
+        style={{ transform: isAISidebarOpen ? 'translateX(0)' : 'translateX(100%)' }}
+      >
+        <p className="text-copy-faint text-sm">AI chat coming soon</p>
+      </aside>
 
-        {isAISidebarOpen && (
-          <aside className="w-80 shrink-0 border-l border-surface-border bg-elevated flex items-center justify-center">
-            <p className="text-copy-faint text-sm">AI chat coming soon</p>
-          </aside>
-        )}
-      </div>
-
+      {/* Dialogs */}
       <ShareDialog
         open={isShareOpen}
         projectId={project.id}
@@ -82,7 +87,6 @@ export function WorkspaceClient({
         isOwner={isOwner}
         onClose={() => setIsShareOpen(false)}
       />
-
       <CreateProjectDialog
         open={actions.activeDialog.type === 'create'}
         formName={actions.formName}
