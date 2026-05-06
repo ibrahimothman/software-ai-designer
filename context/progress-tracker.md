@@ -13,6 +13,7 @@ Update this file whenever the current phase, active feature, or implementation s
 ## Completed
 
 - **01-design-system**: shadcn/ui initialized (v4.7.0, Tailwind v4 mode), components installed (Button, Card, Dialog, Input, Tabs, Textarea, ScrollArea), lucide-react installed, `lib/utils.ts` with `cn()` helper created, `globals.css` configured with full dark-only theme palette and project token aliases mapped via `@theme inline`. Build passes with no errors.
+- **02-editor**: `EditorNavbar` and `ProjectSidebar` shell components built. Navbar is a fixed top bar with sidebar toggle (`PanelLeftOpen`/`PanelLeftClose`) wired via props. Sidebar floats above canvas (fixed, z-40), slides in from the left with CSS transform, shows shadcn Tabs ("My Projects" / "Shared") with empty placeholder states, and a full-width "New Project" button at the bottom. Both components are `"use client"` and TypeScript-strict. Dialog pattern is available via the existing `components/ui/dialog.tsx` (inherits dark tokens from `:root` CSS variables).
 
 ## In Progress
 
