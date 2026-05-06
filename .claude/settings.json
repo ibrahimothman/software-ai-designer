@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Read(//c/Users/Thinkpad/.claude/projects/c--projects-AI-ghos-ai/memory/**)",
+      "Bash(npx next *)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\Thinkpad\\.claude\\projects\\c--projects-AI-ghos-ai\\memory"
+    ]
+  }
+}
