@@ -4,7 +4,13 @@
       "Bash(npm run *)",
       "Read(//c/Users/Thinkpad/.claude/projects/c--projects-AI-ghos-ai/memory/**)",
       "Bash(npx next *)",
-      "Bash(findstr prisma *)"
+      "Bash(findstr prisma *)",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(list\\(d.get\\('exports', {}\\).keys\\(\\)\\)[:20]\\)\")",
+      "Bash(node -e \"const { Liveblocks } = require\\('@liveblocks/node'\\); console.log\\(typeof Liveblocks\\)\")",
+      "Bash(xargs grep -l \"MiniMap\\\\|Background\")",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
     ],
     "additionalDirectories": [
       "c:\\Users\\Thinkpad\\.claude\\projects\\c--projects-AI-ghos-ai\\memory"

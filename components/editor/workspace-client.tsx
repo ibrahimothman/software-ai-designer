@@ -74,7 +74,11 @@ export function WorkspaceClient({
       {/* Right AI panel — fixed, slides in from right, z-40 */}
       <aside
         className="fixed top-12 right-0 bottom-0 z-40 w-80 bg-elevated border-l border-surface-border shadow-2xl flex items-center justify-center transition-transform duration-200 ease-in-out"
-        style={{ transform: isAISidebarOpen ? 'translateX(0)' : 'translateX(100%)' }}
+        aria-hidden={!isAISidebarOpen}
+        style={{
+          transform: isAISidebarOpen ? 'translateX(0)' : 'translateX(100%)',
+          pointerEvents: isAISidebarOpen ? 'auto' : 'none',
+        }}
       >
         <p className="text-copy-faint text-sm">AI chat coming soon</p>
       </aside>
